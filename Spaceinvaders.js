@@ -1,3 +1,5 @@
+var sprite = 1;
+
 var game = {
     fps: 1000/60,
     width: 480,
@@ -9,8 +11,8 @@ var game = {
 }
 
 var fon = {
-	1:{background: new Image(), x:0, y:0},
-	2:{background: new Image(), x:0, y: -game.height},
+	1:{background: new Image(), x:0, y:0, speed: 4},
+	2:{background: new Image(), x:0, y: -game.height, speed : 4},
 }
 
 
@@ -94,7 +96,6 @@ var ammo = {
 }
 
 var explosion = {
-	background: new Image(),
 	enable: false,
 	checkExplosion() {
 		for (var n in enemys){
@@ -128,6 +129,14 @@ var explosion = {
 		
 	}
 }
+
+var explosionSprite = {
+	1:{background: new Image},
+	2:{background: new Image},
+	3:{background: new Image},
+	4:{background: new Image},
+	5:{background: new Image},
+}
 	
 
 
@@ -140,13 +149,17 @@ function init() {
     enemys[2].background.src = "image/enemy2.png";
     enemys[3].background.src = "image/enemy3.png";
     enemys[4].background.src = "image/enemy4.png";
+    explosionSprite[1].background.src = "image/expl1.png";
+    explosionSprite[2].background.src = "image/expl2.png";
+    explosionSprite[3].background.src = "image/expl3.png";
+    explosionSprite[4].background.src = "image/expl4.png";
+    explosionSprite[5].background.src = "image/expl5.png";
     for(var am in ammo){
     	ammo[am].background.src = "image/fire.png";
     }
     for(var f in fon){
     	fon[f].background.src = "image/FonNew.png"
     }
-    explosion.background.src = "image/expl.png";
     game.gameOver.background.src = "image/gameover.png"
     canvas.addEventListener("mousemove", onCanvasMouseMove);
     document.addEventListener("keydown", onDocumentKeyDown);
@@ -154,7 +167,9 @@ function init() {
     		setInterval(play, game.fps)		
     	}
 }
+
 var counter = 0;
+
 function update(){
 	for(var n in enemys){
 		if (enemys[n].y >= game.height) {
@@ -190,11 +205,15 @@ function update(){
 		}
 	}
 	for(var f in fon){
-		fon[f].y += 4
+		fon[f].y += fon[f].speed;
 	}
 	if (fon[1].y >= game.height){
 		fon[1].y = 0;
 		fon[2].y = -game.height
+	}
+	if (explosion.enable == true){
+		fon[1].speed = 0;
+		fon[2].speed = 0;
 	}
 }
 
@@ -219,8 +238,13 @@ function draw() {
     	}
     }
     if (explosion.enable == true){
-    	canvasContext.drawImage(explosion.background, ship.x, ship.y, ship.width, ship.height);
-    	canvasContext.drawImage(game.gameOver.background, 100, 200, 250, 250);
+    	game.fps = 0.2;
+    	setInterval(play, game.fps);
+    	canvasContext.drawImage(explosionSprite[sprite].background, ship.x, ship.y, ship.width, ship.height);
+    	if (sprite < 5){
+    	    sprite += 1;
+    	} else {sprite = 1}
+     	canvasContext.drawImage(game.gameOver.background, 100, 200, 250, 250);
     }
     canvasContext.font = "48px serif";
     canvasContext.fillStyle = 'white';
